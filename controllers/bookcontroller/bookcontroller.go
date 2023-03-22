@@ -49,9 +49,7 @@ func Create(c *gin.Context) {
 		return
 	}
 	models.DB.Create(&book)
-	c.JSON(http.StatusOK, gin.H{
-		"book": book,
-	})
+	c.String(http.StatusOK, "created")
 }
 
 func Update(c *gin.Context) {
@@ -70,9 +68,7 @@ func Update(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"messages": "Data berhasil diperbarui",
-	})
+	c.String(http.StatusOK, "updated")
 }
 
 func Delete(c *gin.Context) {
@@ -94,5 +90,5 @@ func Delete(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Data berhasil dihapus"})
+	c.String(http.StatusOK, "deleted")
 }
