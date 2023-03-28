@@ -5,14 +5,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/haviz000/rest-api-gin/database"
 	"github.com/haviz000/rest-api-gin/models"
 	"gorm.io/gorm"
 )
 
 func Index(c *gin.Context) {
-	var books []models.Book
 
-	models.DB.Find(&books)
+	var books []models.Book
+	DB := database.GetDB()
+	DB.Find(&books)
 	c.JSON(http.StatusOK, gin.H{
 		"books": books,
 	})
@@ -21,7 +23,8 @@ func Index(c *gin.Context) {
 func Show(c *gin.Context) {
 	var book models.Book
 	id := c.Param("id")
-	if err := models.DB.First(&book, id).Error; err != nil {
+	DB := database.GetDB()
+	if err := DB.First(&book, id).Error; err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
@@ -42,19 +45,21 @@ func Show(c *gin.Context) {
 
 func Create(c *gin.Context) {
 	var book models.Book
+	DB := database.GetDB()
 	if err := c.ShouldBindJSON(&book); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"messages": err.Error(),
 		})
 		return
 	}
-	models.DB.Create(&book)
+	DB.Create(&book)
 	c.String(http.StatusOK, "created")
 }
 
 func Update(c *gin.Context) {
 	var book models.Book
 	id := c.Param("id")
+	DB := database.GetDB()
 
 	if err := c.ShouldBindJSON(&book); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -62,7 +67,7 @@ func Update(c *gin.Context) {
 		})
 		return
 	}
-	if models.DB.Model(&book).Where("id = ?", id).Updates(&book).RowsAffected == 0 {
+	if DB.Model(&book).Where("id = ?", id).Updates(&book).RowsAffected == 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"messages": "tidak dapat mengupdate produk",
 		})
@@ -74,7 +79,7 @@ func Update(c *gin.Context) {
 func Delete(c *gin.Context) {
 
 	var book models.Book
-
+	DB := database.GetDB()
 	var input struct {
 		Id json.Number
 	}
@@ -85,7 +90,7 @@ func Delete(c *gin.Context) {
 	}
 
 	id, _ := input.Id.Int64()
-	if models.DB.Delete(&book, id).RowsAffected == 0 {
+	if DB.Delete(&book, id).RowsAffected == 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Tidak dapat menghapus book"})
 		return
 	}
