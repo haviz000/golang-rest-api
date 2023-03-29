@@ -1,7 +1,6 @@
 package bookcontroller
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -80,16 +79,8 @@ func Delete(c *gin.Context) {
 
 	var book models.Book
 	DB := database.GetDB()
-	var input struct {
-		Id json.Number
-	}
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
-
-	id, _ := input.Id.Int64()
+	id := c.Param("id")
 	if DB.Delete(&book, id).RowsAffected == 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Tidak dapat menghapus book"})
 		return

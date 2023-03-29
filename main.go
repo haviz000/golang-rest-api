@@ -15,7 +15,7 @@ func main() {
 	r.GET("/api/books", bookcontroller.Index)
 	r.POST("/api/book", bookcontroller.Create)
 	r.PUT("/api/book/:id", bookcontroller.Update)
-	r.DELETE("/api/book", bookcontroller.Delete)
+	r.DELETE("/api/book/:id", bookcontroller.Delete)
 
 	r.Run()
 }

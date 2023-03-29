@@ -13,7 +13,7 @@ var (
 	host     = "localhost"
 	port     = 5432
 	user     = "postgres"
-	password = "admin"
+	password = "jaka"
 	dbname   = "restapi-book"
 	db       *gorm.DB
 	err      error
